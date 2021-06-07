@@ -1,0 +1,23 @@
+{% extends "easy_pdf/base.html" %}
+
+{% block extra_style %}
+    <style type="text/css">
+        body {
+            font-family: "Helvetica", "sans-serif";
+            color:#333;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<meta charset="utf-8">
+
+<div id="content">
+    <div class="main">
+        <center><h1>Cadastro do Aluno! N{{ object.pk }}</h1></center>
+        <p><b>Nome:</b> {{ object.nome }}</p>
+        <p><b>CPF:</b> {{ object.cpf }}</p>
+        <p><b>E-mail:</b> {{ object.email_aluno }}</p>
+    </div>
+</div>
+{% endblock %}

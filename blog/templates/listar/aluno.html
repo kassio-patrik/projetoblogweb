@@ -1,0 +1,145 @@
+{% extends 'adminlte/base.html' %}
+{% load bootstrap %}
+{% block content  %}
+<h1>Página de listagem dos Alunos!</h1>
+<a class="btn btn-success" href="{% url 'cadastrar_aluno' %}"><i class="fa fa-plus"></i> CADASTRAR ALUNO</a>
+
+<table class="table table-striped">
+    <thead>
+        <th>ID</th>
+        <th>NOME</th>
+    </thead>
+    <tbody>
+{% for obj_aluno in object_list %}
+        <tr>
+            <td>{{obj_aluno.pk}}</td>
+            {% if obj_aluno.nome|length > 30 %}
+            <td>{{obj_aluno.nome|slice:":30"}}...</td>
+            {% else %}
+            <td>{{obj_aluno.nome|slice:":30"}}</td>
+            {% endif %}
+            <td>
+                <center>
+                    <a target="_blank" href="{% url 'pdf_aluno' obj_aluno.pk %}"><i class="fa fa-file-pdf" rel="tooltip" title="Visualizar Recibo"></i> </a>
+                </center>
+            </td>
+            <td>
+                <a href="{% url 'detalhes_aluno' obj_aluno.pk %}"><i class="fa fa-search" rel="tooltip" title="Ver detalhes da aluno"></i> </a>
+                <a href="{% url 'corrigir_aluno' obj_aluno.pk %}"><i class="fa fa-edit" rel="tooltip" title="Editar aluno"></i></a>
+                {% if obj_aluno.excluido is False %}
+                <a class="desabilitar-aluno" data-url="{% url 'ajax_desabilitar_aluno' obj_aluno.pk %}" href="#"><i class="fa fa-check" rel="tooltip" title="Desabilitar aluno"></i></a>
+                {% else %}
+                <a class="habilitar-aluno" data-url="{% url 'ajax_habilitar_aluno' obj_aluno.pk %}" href="#"><i class="fa fa-check" rel="tooltip" title="Habilitar aluno"></i></a>
+                {% endif %}
+            </td>
+        </tr>
+{% empty %}
+    <h3>Desculpe, você ainda nao possui alunos cadastrados em seu sistema.
+        <br/>:'(</h3>
+{% endfor %}
+    </tbody>
+</table>
+
+{% if is_paginated %}
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a class="btn btn-default" href="?page=1">&laquo; Primeira Página </a>
+            <a class="btn btn-primary" href="?page={{ page_obj.previous_page_number }}"><i class="fa fa-arrow-left"></i> Página Anterior </a>
+            {% endif %}
+
+            <span class="current">
+                | Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}. |
+            </span>
+
+            {% if page_obj.has_next %}
+                <a class="btn btn-primary" href="?page={{ page_obj.next_page_number }}">Próxima Página <i class="fa fa-arrow-right"></i></a>
+                <a class="btn btn-default" href="?page={{ page_obj.paginator.num_pages }}">| Última Página &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+{% endif %}
+{% endblock %}
+
+
+{% block javascript %}
+{% include 'adminlte/lib/_scripts.html' %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Vai ser executado apenas após a página estar pronta. Ou seja, carregada.
+
+        // Clicando no ícone de desabilitar
+        $(".desabilitar-aluno").click(function() {
+            //Capturando o valor da propriedate "data-url" que está na tag do ícone com a classe "desabilitar-aluno"
+            var url = $(this).attr('data-url');
+
+            //Abrindo o nosso modal (popup) do SweetAlert com as opções de "confirmação de açao" e "cancelar ação"
+            swal({
+              title: "Desabilitar Aluno",
+              text: "Tem certeza que deseja desabilitar este aluno?",
+              icon: "warning",
+              buttons: true,
+              dangerMode: true,
+            })
+            .then((willDelete) => {
+              if (willDelete) {
+
+                //Se clicar na ação de confirmar a deleção, irá iniciar o AJAX
+                $.ajax({
+                    url: url,
+                    success: function (data) {
+
+                        //No sucesso do AJAX, irá exibir uma modal com SweetAlert informando que a desabilitação foi realizada com sucesso
+                        swal("Aluno desabilitado com sucesso!", {
+                          icon: "success",
+                          timer: 3000
+                        });
+
+                        //Recarregando a página
+                        location.reload();
+                    }
+                });
+
+              } else {
+
+                //Exibindo o SweetAlert caso o usuário cancele a ação
+                swal("Ação cancelada...");
+              }
+            });
+        });
+
+        //Clicando no ícone de habilitar
+        $(".habilitar-aluno").click(function() {
+            var url = $(this).attr('data-url');
+            swal({
+              title: "Habilitar Aluno",
+              text: "Tem certeza que deseja habilitar este aluno?",
+              icon: "warning",
+              buttons: true,
+              dangerMode: true,
+            })
+            .then((willDelete) => {
+              if (willDelete) {
+                $.ajax({
+                    url: url,
+                    success: function (data) {
+                        swal("Aluno habilitado com sucesso!", {
+                          icon: "success",
+                          timer: 3000
+                        });
+                        location.reload();
+                    }
+                });
+
+              } else {
+                swal("Ação cancelada...");
+              }
+            });
+        });
+
+    });
+</script>
+
+{% endblock %}
