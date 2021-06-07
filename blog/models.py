@@ -161,6 +161,8 @@ class Post(models.Model):
     conteudo = models.TextField()
     autor = models.ForeignKey(User, on_delete=models.PROTECT)
     criado_em = models.DateField(auto_now_add=True)
+    email_autor = models.EmailField(blank=True, null=True)
+    hora_post = models.TimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.titulo)
