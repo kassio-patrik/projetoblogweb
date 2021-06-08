@@ -127,6 +127,8 @@ class Duvida(models.Model):
     resumo_duvida = models.CharField(max_length=255, blank=False, null=False, verbose_name='Resumo da Dúvida')
     duvida = models.TextField(blank=False, null=False, verbose_name=('Escreva sua Dúvida'))
     data_hora = models.DateTimeField(auto_now_add=True, verbose_name=('Data e Hora da Dúvida'))
+    data = models.DateField(auto_now_add=True)
+    hora = models.TimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.seu_nome)
