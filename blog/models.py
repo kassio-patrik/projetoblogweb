@@ -116,6 +116,8 @@ class Calendario(models.Model):
     hora_p1 = models.TimeField(blank=False, null=False, verbose_name='Hora da Prova 1')
     data_p2 = models.DateField(blank=False, null=False, verbose_name='Data da Prova 2')
     hora_p2 = models.TimeField(blank=False, null=False, verbose_name='Hora da Prova 2')
+    ferias = models.DateField(blank=False, null=False, verbose_bame='Período de Férias:')
+    feriados = models.DateField(blank=False, null=False, verbose_name='Feriados')
 
     def __str__(self):
         return str(self.nome_curso)
