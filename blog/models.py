@@ -174,6 +174,8 @@ class Comentario(models.Model):
     autor_post = models.CharField(max_length=255, blank=False, null=False)
     nome_post = models.ManyToManyField('Post')
     data_post = models.DateField(blank=False, null=False, verbose_name='Data de publicação do Post')
+    hora_post = models.TimeField(auto_now_add=True)
+    email = models.EmailField(blank=True, null=True)
 
     def __str__(self):
         return str(self.nome_post)
